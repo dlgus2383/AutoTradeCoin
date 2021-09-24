@@ -1,5 +1,5 @@
 import time
-import pyupbit
+from requests import pyupbit
 import datetime
 
 # 1 , 5 , 15 , 30 분봉 추세 방향 
@@ -195,7 +195,7 @@ try:
             if(current_all_trend):
                 #가지고있는 모든 금액 매수 
 
-                upbit.buy_market_order(Coinname,upbit.get_balance("KRW")/2)
+                upbit.buy_market_order(Coinname,inpmoney)
 
                 buyprice = pyupbit.get_current_price(Coinname)
 
