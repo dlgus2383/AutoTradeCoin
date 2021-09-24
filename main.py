@@ -195,7 +195,7 @@ try:
             if(current_all_trend):
                 #가지고있는 모든 금액 매수 
 
-                upbit.buy_market_order(Coinname,inpmoney)
+                upbit.buy_market_order(Coinname,upbit.get_balance("KRW")/2)
 
                 buyprice = pyupbit.get_current_price(Coinname)
 
