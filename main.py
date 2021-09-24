@@ -171,9 +171,9 @@ try:
             # 5분봉이 상승 추세라면 조건하에 
             if(tren and (pyupbit.get_current_price(Coinname)>stoploss)):
                 # 만약 가격이 산 금액에 400000 만큼 오를떄마다 스탑 로스 가격 올리기 
-                if(pyupbit.get_current_price(Coinname) > buyprice+400000):
+                if(pyupbit.get_current_price(Coinname) > buyprice+500000):
                     stoploss+=100000
-                    buyprice+=400000
+                    buyprice+=500000
             
 
 
@@ -195,7 +195,7 @@ try:
             if(current_all_trend):
                 #가지고있는 모든 금액 매수 
 
-                upbit.buy_market_order(Coinname,inpmoney)
+                upbit.buy_market_order(Coinname,upbit.get_balance("KRW"))
 
                 buyprice = pyupbit.get_current_price(Coinname)
 
