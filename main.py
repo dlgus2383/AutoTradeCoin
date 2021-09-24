@@ -1,5 +1,5 @@
 import time
-from requests import pyupbit
+import pyupbit
 import datetime
 
 # 1 , 5 , 15 , 30 분봉 추세 방향 

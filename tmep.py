@@ -25,5 +25,5 @@ upbit = pyupbit.Upbit(access_key,secret_key)
 
 
 
-print(upbit.get_balance(Coinname))
-print(upbit.get_balance('KRW-BTC'))
+print(upbit.get_balance_t(Coinname))
+print(upbit.get_balance_t('KRW-BTC'))
