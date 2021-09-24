@@ -1,5 +1,6 @@
 import time
 import pyupbit
+import datetime
 
 # 1 , 5 , 15 , 30 분봉 추세 방향 
 # True : 상승 , False 하락 
@@ -20,12 +21,12 @@ Coinname = 'KRW-BTC'
 #한번에 들어갈 돈의 양 
 inpmoney = 100000
 
-print("1")
+
 #key
 access_key = "v7K6pzKCAo8QH9o4SnoRYOPF4crNmpTfRrrJI4up"
 secret_key = "GuoBhDkgVVb1feWYlif54hYlzQ1svFmBDejg4ioT"
 upbit = pyupbit.Upbit(access_key,secret_key)
-print("2")
+
 # Trend 계산용 함수 
 def Trend():
 
@@ -95,10 +96,11 @@ def Trend():
 
     # 아무것도 안뜨면 심심하잖아 이거라도 봐야지 
     print("# # -----------------------------------------------------------------------------")
-    # print("1min : ",UpOrDown(minute1_trend),"      5min : ",UpOrDown(minute5_trend),"      15min : ",UpOrDown(minute15_trend),"      30min : ",UpOrDown(minute30_trend))
+    print("1min : ",UpOrDown(minute1_trend),"      5min : ",UpOrDown(minute5_trend),"      15min : ",UpOrDown(minute15_trend),"      30min : ",UpOrDown(minute30_trend))
     print("stoploss : ",stoploss)
     print("buyprice  : ",buyprice)
     print("currentprice : ",pyupbit.get_current_price(Coinname))
+    print("time :",datetime.datetime.now())
         
 
     # 모든 추세가 상승을 예측하고 있으면 True와 Stoploss를 반환 
@@ -159,9 +161,8 @@ def Trend_30min():
     return Heikinashi(pyupbit.get_ohlcv(Coinname,count=7,interval="minute30"))
 
 try:
-    print("3")
+
     while True:
-        print("4")
         if(upbit.get_balance(Coinname)):
 
             # 5분봉 추세 확인 
@@ -186,7 +187,6 @@ try:
 
         # 포지션이 없을경우  
         else:
-            print("5")
 
             # 모든 추세와 스탑 로스가 조사 
             current_all_trend , stoploss= Trend()   
