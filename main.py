@@ -159,9 +159,7 @@ def Trend_30min():
 
 try:
     while True:
-        if((int(upbit.get_balance(Coinname)))==0):
-            print("1번 성공")
-        elif(int(upbit.get_balance(Coinname))==0):
+        if(int(upbit.get_balance(Coinname))==0):
             print("2번 성공")        
         elif(int(upbit.get_balance(Coinname))>0):
             print("3번 성공")
