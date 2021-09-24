@@ -20,11 +20,12 @@ Coinname = "KRW-BTC"
 #한번에 들어갈 돈의 양 
 inpmoney = 100000
 
+print("1")
 #key
 access_key = "v7K6pzKCAo8QH9o4SnoRYOPF4crNmpTfRrrJI4up"
 secret_key = "GuoBhDkgVVb1feWYlif54hYlzQ1svFmBDejg4ioT"
 upbit = pyupbit.Upbit(access_key,secret_key)
-
+print("2")
 # Trend 계산용 함수 
 def Trend():
 
@@ -158,7 +159,9 @@ def Trend_30min():
     return Heikinashi(pyupbit.get_ohlcv(Coinname,count=7,interval="minute30"))
 
 try:
+    print("3")
     while True:
+        print("4")
         if(upbit.get_balance(Coinname)):
 
             # 5분봉 추세 확인 
@@ -183,6 +186,7 @@ try:
 
         # 포지션이 없을경우  
         else:
+            print("5")
 
             # 모든 추세와 스탑 로스가 조사 
             current_all_trend , stoploss= Trend()   
