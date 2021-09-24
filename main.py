@@ -15,7 +15,7 @@ stoploss = 0
 buyprice = 0
 
 #코인 이름 
-Coinname = "KRW-BTC"
+Coinname = 'KRW-BTC'
 
 #한번에 들어갈 돈의 양 
 inpmoney = 100000
