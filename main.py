@@ -160,10 +160,9 @@ def Trend_30min():
 try:
     while True:
 
-        if(upbit.get_balance(Coinname)==0):
-            print("4번 성공")
+        tmep1 = upbit.get_balance(Coinname)
 
-        if(upbit.get_balance(Coinname)):
+        if(tmep1):
 
             # 5분봉 추세 확인 
             tren = Trend_30min()
