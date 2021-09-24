@@ -18,7 +18,7 @@ buyprice = 0
 Coinname = "KRW-BTC"
 
 #한번에 들어갈 돈의 양 
-# inpmoney = 100000
+inpmoney = 100000
 
 #key
 access_key = "v7K6pzKCAo8QH9o4SnoRYOPF4crNmpTfRrrJI4up"
@@ -183,14 +183,18 @@ try:
 
         # 포지션이 없을경우  
         else:
+            print("1번")
             # 모든 추세와 스탑 로스가 조사 
             current_all_trend , stoploss= Trend()   
             # 만약 모든 추세가 상승이라면 
+            print("2번")
             if(current_all_trend):
                 #가지고있는 모든 금액 매수 
-                
-                upbit.buy_market_order(Coinname,int(upbit.get_balance("KRW"))/2)
+                print("3번")
+                upbit.buy_market_order(Coinname,inpmoney)
+                print("4번")
                 buyprice = pyupbit.get_current_price(Coinname)
+                print("5번 ")
             time.sleep(1)  
 
 except:
