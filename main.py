@@ -159,9 +159,6 @@ def Trend_30min():
 
 try:
     while True:
-
-        print(upbit.get_balance(Coinname))
-
         if(upbit.get_balance(Coinname)):
 
             # 5분봉 추세 확인 
