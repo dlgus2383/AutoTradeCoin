@@ -160,9 +160,9 @@ def Trend_30min():
 try:
     while True:
 
-        tmep1 = upbit.get_balance(Coinname)
+        print(upbit.get_balance(Coinname))
 
-        if(tmep1):
+        if(upbit.get_balance(Coinname)):
 
             # 5분봉 추세 확인 
             tren = Trend_30min()
@@ -186,18 +186,18 @@ try:
 
         # 포지션이 없을경우  
         else:
-            print("1번")
+
             # 모든 추세와 스탑 로스가 조사 
             current_all_trend , stoploss= Trend()   
             # 만약 모든 추세가 상승이라면 
-            print("2번")
+
             if(current_all_trend):
                 #가지고있는 모든 금액 매수 
-                print("3번")
+
                 upbit.buy_market_order(Coinname,inpmoney)
-                print("4번")
+
                 buyprice = pyupbit.get_current_price(Coinname)
-                print("5번 ")
+
             time.sleep(1)  
 
 except:
