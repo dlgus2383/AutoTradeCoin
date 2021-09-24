@@ -160,49 +160,49 @@ def Trend_30min():
     # 5분봉 트렌드 전 캔들이 상승일경우 True 하락일경우 False 반환 
     return Heikinashi(pyupbit.get_ohlcv(Coinname,count=7,interval="minute30"))
 
-try:
+# try:
 
-    while True:
-        if(upbit.get_balance(Coinname)):
+while True:
+    if(upbit.get_balance(Coinname)):
 
-            # 5분봉 추세 확인 
-            tren = Trend_30min()
-            
-            # 5분봉이 상승 추세라면 조건하에 
-            if(tren and (pyupbit.get_current_price(Coinname)>stoploss)):
-                # 만약 가격이 산 금액에 400000 만큼 오를떄마다 스탑 로스 가격 올리기 
-                if(pyupbit.get_current_price(Coinname) > buyprice+500000):
-                    stoploss+=100000
-                    buyprice+=500000
-            
+        # 5분봉 추세 확인 
+        tren = Trend_30min()
+        
+        # 5분봉이 상승 추세라면 조건하에 
+        if(tren and (pyupbit.get_current_price(Coinname)>stoploss)):
+            # 만약 가격이 산 금액에 400000 만큼 오를떄마다 스탑 로스 가격 올리기 
+            if(pyupbit.get_current_price(Coinname) > buyprice+500000):
+                stoploss+=100000
+                buyprice+=500000
+        
 
 
-            # 5분봉이 하락 추세라면 매도 
-            else:
-                upbit.sell_market_order(Coinname, upbit.get_balance(Coinname))
-                stoploss = 0
-                buyprice = 0
-            print("position")
-            time.sleep(1)
-
-        # 포지션이 없을경우  
+        # 5분봉이 하락 추세라면 매도 
         else:
+            upbit.sell_market_order(Coinname, upbit.get_balance(Coinname))
+            stoploss = 0
+            buyprice = 0
+        print("position")
+        time.sleep(1)
 
-            # 모든 추세와 스탑 로스가 조사 
-            current_all_trend , stoploss= Trend()   
-            # 만약 모든 추세가 상승이라면 
+    # 포지션이 없을경우  
+    else:
 
-            if(current_all_trend):
-                #가지고있는 모든 금액 매수 
+        # 모든 추세와 스탑 로스가 조사 
+        current_all_trend , stoploss= Trend()   
+        # 만약 모든 추세가 상승이라면 
 
-                upbit.buy_market_order(Coinname,upbit.get_balance("KRW"))
+        if(current_all_trend):
+            #가지고있는 모든 금액 매수 
 
-                buyprice = pyupbit.get_current_price(Coinname)
+            upbit.buy_market_order(Coinname,upbit.get_balance("KRW")/2)
 
-            time.sleep(1)  
+            buyprice = pyupbit.get_current_price(Coinname)
 
-except:
-    raise
+        time.sleep(1)  
+
+# except:
+#     raise
 
 
  
