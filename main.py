@@ -1,5 +1,5 @@
-import pyupbit
 import time
+import pyupbit
 
 # 1 , 5 , 15 , 30 분봉 추세 방향 
 # True : 상승 , False 하락 
@@ -159,7 +159,15 @@ def Trend_30min():
 
 try:
     while True:
-        print("asdf")
+        if((int(upbit.get_balance(Coinname)))==0):
+            print("1번 성공")
+        elif(int(upbit.get_balance(Coinname))==0):
+            print("2번 성공")        
+        elif(int(upbit.get_balance(Coinname))>0):
+            print("3번 성공")
+        elif(upbit.get_balance(Coinname)==0):
+            print("4번 성공")
+
         if(upbit.get_balance(Coinname)):
 
             # 5분봉 추세 확인 
