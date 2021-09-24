@@ -3,6 +3,8 @@ __pycache__/
 *.py[cod]
 *$py.class
 
+/auto_key.pem
+
 # C extensions
 *.so
 
