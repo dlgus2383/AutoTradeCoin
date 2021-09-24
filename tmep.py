@@ -25,5 +25,5 @@ upbit = pyupbit.Upbit(access_key,secret_key)
 
 
 
-a = upbit.get_balance("KRW")
-upbit.buy_market_order(Coinname,a/2)
+print(upbit.get_balance(Coinname))
+print(upbit.get_balance('KRW-BTC'))
