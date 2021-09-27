@@ -163,7 +163,7 @@ def Trend_30min():
 # try:
 
 while True:
-    if(upbit.get_balance(Coinname)):
+    if(upbit.get_balance('KRW-BTC')):
 
         # 5분봉 추세 확인 
         tren = Trend_30min()
