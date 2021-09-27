@@ -18,8 +18,8 @@ buyprice = 0
 #코인 이름 
 Coinname = 'KRW-BTC'
 
-#한번에 들어갈 돈의 양 
-inpmoney = 100000
+# 부분 익절을 위한 
+profit = 0
 
 
 #key
@@ -171,9 +171,12 @@ while True:
         # 5분봉이 상승 추세라면 조건하에 
         if(tren and (pyupbit.get_current_price(Coinname)>stoploss)):
             # 만약 가격이 산 금액에 400000 만큼 오를떄마다 스탑 로스 가격 올리기 
-            if(pyupbit.get_current_price(Coinname) > buyprice+500000):
-                stoploss+=100000
-                buyprice+=500000
+
+            if(pyupbit.get_current_price(Coinname) > buyprice + profit*2):
+                stoploss = buyprice+profit
+
+            elif(pyupbit.get_current_price(Coinname) > buyprice + profit):
+                stoploss = buyprice
         
 
 
@@ -182,6 +185,7 @@ while True:
             upbit.sell_market_order(Coinname, upbit.get_balance(Coinname))
             stoploss = 0
             buyprice = 0
+            profit   = 0   
         print("position")
         time.sleep(1)
 
@@ -193,11 +197,11 @@ while True:
         # 만약 모든 추세가 상승이라면 
 
         if(current_all_trend):
-            #가지고있는 모든 금액 매수 
+            #가지고있는 금액의 반절 매수 
 
             upbit.buy_market_order(Coinname,upbit.get_balance("KRW")/2)
-
             buyprice = pyupbit.get_current_price(Coinname)
+            profit = buyprice - stoploss
 
         time.sleep(1)  
 
