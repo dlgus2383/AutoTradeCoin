@@ -4,6 +4,7 @@ __pycache__/
 *$py.class
 
 /auto_key.pem
+/key.txt
 
 # C extensions
 *.so
