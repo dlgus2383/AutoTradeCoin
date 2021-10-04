@@ -145,19 +145,6 @@ posi        = None
 stoploss    = 0
 # tradelist = []
 
-
-
-btc = binance.fetch_ohlcv(
-    symbol=SYMBOL, 
-    timeframe=TIMEFRAME, 
-    since=SINCE, 
-    limit=LIMIT)        
-df = pd.DataFrame(btc, columns=['datetime', 'open', 'high', 'low', 'close', 'volume'])    
-df['datetime'] = pd.to_datetime(df['datetime'], unit='ms')
-df.set_index('datetime', inplace=True)
-Trend = trendstate(df,Length)
-
-
 while(True):
     # Get past data 
     btc = binance.fetch_ohlcv(
@@ -175,7 +162,7 @@ while(True):
     positions = balance['info']['positions']
     for position in positions:
         if position["symbol"] == SYMBOLPOSITION:
-            Currentposition = float(position['positionAmt'])         
+            Currentposition = float(position['positionAmt'])       
     # print(balance['USDT'])
     if(Currentposition == 0):
         posi        = None
@@ -225,6 +212,7 @@ while(True):
         posi = True
         stoploss = df['low'][-2]
         print("Long Position")
+    # 현제 추세는 하락과 전 추세가 하락은 아니여야함 
 
     elif(Trend == False and posi != False):
         # 숏 진입 
@@ -248,97 +236,5 @@ while(True):
         print(posi)
 
     time.sleep(0.5)
-
-
-# 레버리지 설정 
-# markets = binance.load_markets()
-# symbol = "BTC/USDT"
-# market = binance.market(symbol)
-# leverage = 5
-
-# resp = binance.fapiPrivate_post_leverage({
-#     'symbol': market['id'],
-#     'leverage': leverage
-# })
-
-# 포지션 얻어오기 
-# balance = binance.fetch_balance()
-# positions = balance['info']['positions']
-
-# for position in positions:
-#     if position["symbol"] == "BTCUSDT":
-#         pprint.pprint(position)
-
-
-### 선물 티커 조회 BTC/USDT 이거 하나만 쓸거라서 쓸모 없음 
-
-# markets = binance.load_markets()
-# for m in markets:
-#     print(m)
-
-
-
-
-
-### 선물 잔고 free = 보유중인 코인 , used =  거래중인 코인 , total = 전체 코인
-
-# balance = binance.fetch_balance(params={"type": "future"})
-# print(balance['USDT'])
-# 선물에 들어있는 USDT 조사 
-# print(balance['total']['USDT'])
-
-
-
-
-
-### 선물 현재가 조회 
-
-# btc = binance.fetch_ticker("BTC/USDT")
-# pprint.pprint(btc['last'])
-
-
-
-
-
-### 선물 과거 데이터 조회 
-###    symbol="BTC/USDT"     티커 
-###    timeframe='1d'        분봉 ex > 1d , 4h , 1h , 30m , 15m , 5m , 1m 
-###    since=None            시작
-###    limit=10              개수 
-# btc = binance.fetch_ohlcv(
-#     symbol="BTC/USDT", 
-#     timeframe='4h', 
-#     since=None, 
-#     limit=10)
-
-# df = pd.DataFrame(btc, columns=['datetime', 'open', 'high', 'low', 'close', 'volume'])
-# df['datetime'] = pd.to_datetime(df['datetime'], unit='ms')
-# df.set_index('datetime', inplace=True)
-# print(df)
-
-
-# # 선물 롱 진입 
-# order = binance.create_market_buy_order(
-#     symbol="BTC/USDT",
-#     amount=0.001
-# )
-
-# # 선물 롱 청산  
-# order = binance.create_market_sell_order(
-#     symbol="BTC/USDT",
-#     amount=0.001
-# )
-
-# # 선물 숏 진입
-# order = binance.create_market_sell_order(
-#     symbol="BTC/USDT",
-#     amount=0.001, 
-# )
-
-# # 선물 숏 청산 
-# order = binance.create_market_buy_order(
-#     symbol="BTC/USDT",
-#     amount=0.001, 
-# )
 
 
