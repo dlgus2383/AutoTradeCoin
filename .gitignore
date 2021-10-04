@@ -3,8 +3,10 @@ __pycache__/
 *.py[cod]
 *$py.class
 
-/auto_key.pem
+/binanace_key.pem
 /key.txt
+/finaltest1min.py
+
 
 # C extensions
 *.so
