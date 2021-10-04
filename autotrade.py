@@ -141,9 +141,9 @@ def trendstate(df,SPAN):
     else:
         return None 
     
-posi        = None
+
 stoploss    = 0
-# tradelist = []
+
 
 while(True):
     # Get past data 
@@ -157,7 +157,7 @@ while(True):
     df.set_index('datetime', inplace=True)
     Trend = trendstate(df,Length)
 
-    # Get Position 수동으로 할걸을 대비 
+    # Get Position 수동으로 청산을 할 경우 값 모두 초기화  
     balance = binance.fetch_balance(params={"type": "future"})
     positions = balance['info']['positions']
     for position in positions:
@@ -165,38 +165,32 @@ while(True):
             Currentposition = float(position['positionAmt'])       
     # print(balance['USDT'])
     if(Currentposition == 0):
-        posi        = None
         stoploss    = 0
+        posi == None
+    elif(Currentposition > 0):
+        posi = True
+    elif(Currentposition < 0):
+        posi = False
 
-
-    if(posi==True and df['close'][-1]<stoploss):
-        # 롱일떄 청산 신호이니 숏 
+    # long end
+    if(posi == True and df['close'][-1]<stoploss):
         order = binance.create_market_sell_order(
         symbol=SYMBOL,
         amount=AMOUNT
         )
         # RESET
         stoploss = 0
-        posi = None
-
-
-
-
-    elif(posi==False and df['close'][-1]>stoploss):
-        # 숏일떄 청산이니 롱 
+        
+    #  short end 
+    elif(posi == False and df['close'][-1]>stoploss):
         order = binance.create_market_buy_order(
         symbol=SYMBOL,
         amount=AMOUNT
         )
         # RESET
         stoploss = 0
-        posi = None
-
-
-        
-
-    elif(Trend == True and posi != True):
-        # 롱 진입 
+    # entry long
+    elif(Trend == True):
         order = binance.create_market_buy_order(
         symbol=SYMBOL,
         amount=AMOUNT
@@ -209,12 +203,11 @@ while(True):
             )
 
         # STOPLOSS
-        posi = True
         stoploss = df['low'][-2]
         print("Long Position")
     # 현제 추세는 하락과 전 추세가 하락은 아니여야함 
 
-    elif(Trend == False and posi != False):
+    elif(Trend == False):
         # 숏 진입 
         order = binance.create_market_sell_order(
         symbol=SYMBOL,
@@ -225,15 +218,9 @@ while(True):
             symbol=SYMBOL,
             amount=AMOUNT
             )
-
         # STOPLOSS
-        posi = False
         stoploss = df['high'][-2]
         print("SHORT POSITION")
-
-
-    else:
-        print(posi)
 
     time.sleep(0.5)
 
