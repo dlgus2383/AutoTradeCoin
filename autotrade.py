@@ -51,7 +51,20 @@ resp = binance.fapiPrivate_post_leverage({
 
 def trendstate(df,SPAN):
     global last_signal
-
+    def heitrend2(df):
+        if (df['heiopen'][-2] < df['heiclose'][-2]):
+            return True
+        elif(df['heiopen'][-2] > df['heiclose'][-2]):
+            return False
+        else:
+            return None
+    def heitrend1(df):
+        if (df['heiopen'][-1] < df['heiclose'][-1]):
+            return True
+        elif(df['heiopen'][-1] > df['heiclose'][-1]):
+            return False
+        else:
+            return None
     # Candle ---> Heikin Ashi Candle
     # heihigh == high , heilow == low 
     heiopen  = []
@@ -130,12 +143,14 @@ def trendstate(df,SPAN):
     else:
         currentshortcond = False
     
-    # 현재는 상승 전봉은 하락 
-    if(last_signal != True and currentlongCond):
+    # 현봉과 , 전봉이 모두 상승하며 , 수치도 상승을 예고한다
+    # 중복되는걸 막기위해 최근 신호가 True면 안됨
+    if(last_signal != True and currentlongCond and heitrend2(df)== True  and heitrend1(df) == True):
         last_signal = True
         return True 
-    # 현재는 하락 전봉은 상승 
-    elif(last_signal != False and currentshortcond):
+    # 현봉과 , 전봉이 모두 하강하며 , 수치도 하락을 예고한다
+    # 중복되는걸 막기위해 최근 신호가 False면 안됨 
+    elif(last_signal != False and currentshortcond and heitrend2(df)== False and heitrend1(df) == False):
         last_signal = False
         return False 
     else:
@@ -148,10 +163,10 @@ stoploss    = 0
 while(True):
     # Get past data 
     btc = binance.fetch_ohlcv(
-        symbol=SYMBOL, 
+        symbol   =SYMBOL, 
         timeframe=TIMEFRAME, 
-        since=SINCE, 
-        limit=LIMIT)        
+        since    =SINCE, 
+        limit    =LIMIT)        
     df = pd.DataFrame(btc, columns=['datetime', 'open', 'high', 'low', 'close', 'volume'])    
     df['datetime'] = pd.to_datetime(df['datetime'], unit='ms')
     df.set_index('datetime', inplace=True)
@@ -164,64 +179,59 @@ while(True):
         if position["symbol"] == SYMBOLPOSITION:
             Currentposition = float(position['positionAmt'])       
     # print(balance['USDT'])
-    if(Currentposition == 0):
-        stoploss    = 0
-        posi = None
-    elif(Currentposition > 0):
-        posi = True
-    elif(Currentposition < 0):
-        posi = False
+    
 
-    # long end
-    if(posi == True and df['close'][-1]<stoploss):
-        order = binance.create_market_sell_order(
-        symbol=SYMBOL,
-        amount=AMOUNT
-        )
-        # RESET
-        last_signal = False
-        stoploss = 0
-        
-    #  short end 
-    elif(posi == False and df['close'][-1]>stoploss):
-        order = binance.create_market_buy_order(
-        symbol=SYMBOL,
-        amount=AMOUNT
-        )
-        # RESET
-        last_signal = True
-        stoploss = 0
-    # entry long
-    elif(Trend == True):
-        order = binance.create_market_buy_order(
-        symbol=SYMBOL,
-        amount=AMOUNT
-        )
-        # SWITCHING
-        if(posi == False):
+    # No Position 
+    if(Currentposition == 0):
+        if(Trend == True ):
             order = binance.create_market_buy_order(
             symbol=SYMBOL,
             amount=AMOUNT
             )
-
-        # STOPLOSS
-        stoploss = df['low'][-2]
-        print("Long Position")
-    # 현제 추세는 하락과 전 추세가 하락은 아니여야함 
-
-    elif(Trend == False):
-        # 숏 진입 
-        order = binance.create_market_sell_order(
-        symbol=SYMBOL,
-        amount=AMOUNT
-        )
-        if(posi == True):
+            print(datetime.datetime.now() + " Long Position")
+            stoploss = df['low'][-2]
+        elif(Trend == False):
             order = binance.create_market_sell_order(
             symbol=SYMBOL,
             amount=AMOUNT
             )
-        # STOPLOSS
-        stoploss = df['high'][-2]
-        print("SHORT POSITION")
-    print(posi)
+            print(datetime.datetime.now() + " Short Position")
+            stoploss = df['high'][-2]            
+        else:
+            pass
+
+    # Long Position
+    elif(Currentposition > 0):
+        if(df['close'][-1]<stoploss):
+            order = binance.create_market_sell_order(
+            symbol=SYMBOL,
+            amount=AMOUNT
+            )
+            last_signal = None
+            print(datetime.datetime.now() + " Sell All Position")
+        elif(Trend == False):
+            order = binance.create_market_sell_order(
+            symbol=SYMBOL,
+            amount=AMOUNT *2
+            )
+            print(datetime.datetime.now() + " Long ---> Shrot Switching")
+            stoploss = df['high'][-2]    
+
+    # short position
+    elif(Currentposition < 0):
+        if(df['close'][-1]>stoploss):
+            order = binance.create_market_buy_order(
+            symbol=SYMBOL,
+            amount=AMOUNT
+            )
+            last_signal = None
+            print(datetime.datetime.now() + " All Position ---> No position")
+        elif(Trend==True):
+            order = binance.create_market_buy_order(
+            symbol=SYMBOL,
+            amount=AMOUNT*2
+            )
+            stoploss = df['low'][-2] 
+            print(datetime.datetime.now() + " Shrot ---> Long Switching")
+
     time.sleep(0.5)
