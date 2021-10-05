@@ -166,7 +166,7 @@ while(True):
     # print(balance['USDT'])
     if(Currentposition == 0):
         stoploss    = 0
-        posi == None
+        posi = None
     elif(Currentposition > 0):
         posi = True
     elif(Currentposition < 0):
@@ -179,6 +179,7 @@ while(True):
         amount=AMOUNT
         )
         # RESET
+        last_signal = False
         stoploss = 0
         
     #  short end 
@@ -188,6 +189,7 @@ while(True):
         amount=AMOUNT
         )
         # RESET
+        last_signal = True
         stoploss = 0
     # entry long
     elif(Trend == True):
@@ -221,7 +223,5 @@ while(True):
         # STOPLOSS
         stoploss = df['high'][-2]
         print("SHORT POSITION")
-
+    print(posi)
     time.sleep(0.5)
-
-
