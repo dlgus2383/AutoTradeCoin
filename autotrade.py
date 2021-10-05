@@ -188,14 +188,14 @@ while(True):
             symbol=SYMBOL,
             amount=AMOUNT
             )
-            print(datetime.datetime.now() + " Long Position")
+            # print(datetime.datetime.now() + " Long Position")
             stoploss = df['low'][-2]
         elif(Trend == False):
             order = binance.create_market_sell_order(
             symbol=SYMBOL,
             amount=AMOUNT
             )
-            print(datetime.datetime.now() + " Short Position")
+            # print(datetime.datetime.now() + " Short Position")
             stoploss = df['high'][-2]            
         else:
             pass
@@ -208,13 +208,13 @@ while(True):
             amount=AMOUNT
             )
             last_signal = None
-            print(datetime.datetime.now() + " Sell All Position")
+            # print(datetime.datetime.now() + " Sell All Position")
         elif(Trend == False):
             order = binance.create_market_sell_order(
             symbol=SYMBOL,
             amount=AMOUNT *2
             )
-            print(datetime.datetime.now() + " Long ---> Shrot Switching")
+            # print(datetime.datetime.now() + " Long ---> Shrot Switching")
             stoploss = df['high'][-2]    
 
     # short position
@@ -225,13 +225,13 @@ while(True):
             amount=AMOUNT
             )
             last_signal = None
-            print(datetime.datetime.now() + " All Position ---> No position")
+            # print(datetime.datetime.now() + " All Position ---> No position")
         elif(Trend==True):
             order = binance.create_market_buy_order(
             symbol=SYMBOL,
             amount=AMOUNT*2
             )
             stoploss = df['low'][-2] 
-            print(datetime.datetime.now() + " Shrot ---> Long Switching")
+            # print(datetime.datetime.now() + " Shrot ---> Long Switching")
 
     time.sleep(0.5)
