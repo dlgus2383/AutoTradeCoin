@@ -144,8 +144,9 @@ def trendstate(df,SPAN):
 
 stoploss    = 0
 
-try:
-    while(True):
+
+while(True):
+    try:
         # Get past data 
         btc = binance.fetch_ohlcv(
             symbol   =SYMBOL, 
@@ -218,6 +219,6 @@ try:
                 stoploss = df['low'][-2] 
                 # print(datetime.datetime.now() + " Shrot ---> Long Switching")
         time.sleep(0.5)
-except Exception as e:    # 모든 예외의 에러 메시지를 출력할 때는 Exception을 사용
-    print('ERROR NAME : ', e)
-    time.sleep(0.5)
+    except Exception as e:    # 모든 예외의 에러 메시지를 출력할 때는 Exception을 사용
+        print('ERROR NAME : ', e)
+        time.sleep(0.5)
