@@ -28,17 +28,18 @@ binance = ccxt.binance(config={
 
 
 
-
+f = open('testtxt.txt','a')
 while(True):
     try:
-        f = open('testtxt.txt','a')
+        
         btc = binance.fetch_ohlcv(
             symbol   =SYMBOL, 
             timeframe=TIMEFRAME, 
             since    =SINCE, 
             limit    =LIMIT)    
         print(btc,file=f)
-        time.sleep(5)
-        f.close()
+        time.sleep(1)
+
     except : 
         pass
+f.close()
