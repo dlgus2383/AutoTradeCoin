@@ -51,20 +51,7 @@ resp = binance.fapiPrivate_post_leverage({
 
 def trendstate(df,SPAN):
     global last_signal
-    def heitrend2(df):
-        if (df['heiopen'][-2] < df['heiclose'][-2]):
-            return True
-        elif(df['heiopen'][-2] > df['heiclose'][-2]):
-            return False
-        else:
-            return None
-    def heitrend1(df):
-        if (df['heiopen'][-1] < df['heiclose'][-1]):
-            return True
-        elif(df['heiopen'][-1] > df['heiclose'][-1]):
-            return False
-        else:
-            return None
+
     # Candle ---> Heikin Ashi Candle
     # heihigh == high , heilow == low 
     heiopen  = []
@@ -144,13 +131,11 @@ def trendstate(df,SPAN):
         currentshortcond = False
     
     # 현봉과 , 전봉이 모두 상승하며 , 수치도 상승을 예고한다
-    # 중복되는걸 막기위해 최근 신호가 True면 안됨
-    if(last_signal != True and currentlongCond and heitrend2(df)== True  and heitrend1(df) == True):
+    if(last_signal != True and currentlongCond):
         last_signal = True
         return True 
     # 현봉과 , 전봉이 모두 하강하며 , 수치도 하락을 예고한다
-    # 중복되는걸 막기위해 최근 신호가 False면 안됨 
-    elif(last_signal != False and currentshortcond and heitrend2(df)== False and heitrend1(df) == False):
+    elif(last_signal != False and currentshortcond):
         last_signal = False
         return False 
     else:
@@ -172,7 +157,6 @@ try:
         df.set_index('datetime', inplace=True)
         Trend = trendstate(df,Length)
 
-        # Get Position 수동으로 청산을 할 경우 값 모두 초기화  
         balance = binance.fetch_balance(params={"type": "future"})
         positions = balance['info']['positions']
         for position in positions:
@@ -235,5 +219,5 @@ try:
                 # print(datetime.datetime.now() + " Shrot ---> Long Switching")
         time.sleep(0.5)
 except Exception as e:    # 모든 예외의 에러 메시지를 출력할 때는 Exception을 사용
-    print('예외가 발생했습니다.', e)
+    print('ERROR NAME : ', e)
     time.sleep(0.5)
