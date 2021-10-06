@@ -159,79 +159,81 @@ def trendstate(df,SPAN):
 
 stoploss    = 0
 
+try:
+    while(True):
+        # Get past data 
+        btc = binance.fetch_ohlcv(
+            symbol   =SYMBOL, 
+            timeframe=TIMEFRAME, 
+            since    =SINCE, 
+            limit    =LIMIT)        
+        df = pd.DataFrame(btc, columns=['datetime', 'open', 'high', 'low', 'close', 'volume'])    
+        df['datetime'] = pd.to_datetime(df['datetime'], unit='ms')
+        df.set_index('datetime', inplace=True)
+        Trend = trendstate(df,Length)
 
-while(True):
-    # Get past data 
-    btc = binance.fetch_ohlcv(
-        symbol   =SYMBOL, 
-        timeframe=TIMEFRAME, 
-        since    =SINCE, 
-        limit    =LIMIT)        
-    df = pd.DataFrame(btc, columns=['datetime', 'open', 'high', 'low', 'close', 'volume'])    
-    df['datetime'] = pd.to_datetime(df['datetime'], unit='ms')
-    df.set_index('datetime', inplace=True)
-    Trend = trendstate(df,Length)
+        # Get Position 수동으로 청산을 할 경우 값 모두 초기화  
+        balance = binance.fetch_balance(params={"type": "future"})
+        positions = balance['info']['positions']
+        for position in positions:
+            if position["symbol"] == SYMBOLPOSITION:
+                Currentposition = float(position['positionAmt'])       
+        # print(balance['USDT'])
+        
 
-    # Get Position 수동으로 청산을 할 경우 값 모두 초기화  
-    balance = binance.fetch_balance(params={"type": "future"})
-    positions = balance['info']['positions']
-    for position in positions:
-        if position["symbol"] == SYMBOLPOSITION:
-            Currentposition = float(position['positionAmt'])       
-    # print(balance['USDT'])
-    
+        # No Position 
+        if(Currentposition == 0):
+            if(Trend == True ):
+                order = binance.create_market_buy_order(
+                symbol=SYMBOL,
+                amount=AMOUNT
+                )
+                # print(datetime.datetime.now() + " Long Position")
+                stoploss = df['low'][-2]
+            elif(Trend == False):
+                order = binance.create_market_sell_order(
+                symbol=SYMBOL,
+                amount=AMOUNT
+                )
+                # print(datetime.datetime.now() + " Short Position")
+                stoploss = df['high'][-2]            
+            else:
+                pass
 
-    # No Position 
-    if(Currentposition == 0):
-        if(Trend == True ):
-            order = binance.create_market_buy_order(
-            symbol=SYMBOL,
-            amount=AMOUNT
-            )
-            # print(datetime.datetime.now() + " Long Position")
-            stoploss = df['low'][-2]
-        elif(Trend == False):
-            order = binance.create_market_sell_order(
-            symbol=SYMBOL,
-            amount=AMOUNT
-            )
-            # print(datetime.datetime.now() + " Short Position")
-            stoploss = df['high'][-2]            
-        else:
-            pass
+        # Long Position
+        elif(Currentposition > 0):
+            if(df['close'][-1]<stoploss):
+                order = binance.create_market_sell_order(
+                symbol=SYMBOL,
+                amount=AMOUNT
+                )
+                last_signal = None
+                # print(datetime.datetime.now() + " Sell All Position")
+            elif(Trend == False):
+                order = binance.create_market_sell_order(
+                symbol=SYMBOL,
+                amount=AMOUNT *2
+                )
+                # print(datetime.datetime.now() + " Long ---> Shrot Switching")
+                stoploss = df['high'][-2]    
 
-    # Long Position
-    elif(Currentposition > 0):
-        if(df['close'][-1]<stoploss):
-            order = binance.create_market_sell_order(
-            symbol=SYMBOL,
-            amount=AMOUNT
-            )
-            last_signal = None
-            # print(datetime.datetime.now() + " Sell All Position")
-        elif(Trend == False):
-            order = binance.create_market_sell_order(
-            symbol=SYMBOL,
-            amount=AMOUNT *2
-            )
-            # print(datetime.datetime.now() + " Long ---> Shrot Switching")
-            stoploss = df['high'][-2]    
-
-    # short position
-    elif(Currentposition < 0):
-        if(df['close'][-1]>stoploss):
-            order = binance.create_market_buy_order(
-            symbol=SYMBOL,
-            amount=AMOUNT
-            )
-            last_signal = None
-            # print(datetime.datetime.now() + " All Position ---> No position")
-        elif(Trend==True):
-            order = binance.create_market_buy_order(
-            symbol=SYMBOL,
-            amount=AMOUNT*2
-            )
-            stoploss = df['low'][-2] 
-            # print(datetime.datetime.now() + " Shrot ---> Long Switching")
-
+        # short position
+        elif(Currentposition < 0):
+            if(df['close'][-1]>stoploss):
+                order = binance.create_market_buy_order(
+                symbol=SYMBOL,
+                amount=AMOUNT
+                )
+                last_signal = None
+                # print(datetime.datetime.now() + " All Position ---> No position")
+            elif(Trend==True):
+                order = binance.create_market_buy_order(
+                symbol=SYMBOL,
+                amount=AMOUNT*2
+                )
+                stoploss = df['low'][-2] 
+                # print(datetime.datetime.now() + " Shrot ---> Long Switching")
+        time.sleep(0.5)
+except Exception as e:    # 모든 예외의 에러 메시지를 출력할 때는 Exception을 사용
+    print('예외가 발생했습니다.', e)
     time.sleep(0.5)
