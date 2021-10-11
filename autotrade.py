@@ -4,17 +4,19 @@ import time
 import pandas as pd
 from pandas.core.frame import DataFrame
 import pprint
-# EMA 길이 
-Length = 14
 
-# COIN NAME , TIMEFRAME , SINCE , CANDLE NUMBER , ENTRY AMOUNT ,LEVERAGE
-SYMBOL         = "ETH/USDT"
-SYMBOLPOSITION = "ETHUSDT"
-TIMEFRAME      = '15m'
+
+# COIN NAME , TIMEFRAME , SINCE , CANDLE NUMBER , ema length
+SYMBOL         = "BTC/USDT"
+SYMBOLPOSITION = "BTCUSDT"
+TIMEFRAME      = '30m'
 SINCE          = None
 LIMIT          = 200
-AMOUNT         = 0.040
-LEVERAGE       = 4
+Length = 9
+
+# ENTRY AMOUNT ,LEVERAGE
+AMOUNT         = 0.006
+LEVERAGE       = 10
 
 # up = True , down = False , start = None
 last_signal = None
@@ -27,7 +29,6 @@ with open("./key.txt") as f:
     api_key = lines[0].strip()
     secret  = lines[1].strip()
 
-
 # Login
 binance = ccxt.binance(config={
     'apiKey': api_key,
@@ -38,7 +39,6 @@ binance = ccxt.binance(config={
     }
 })
 
-
 # Set Leverage
 markets = binance.load_markets()
 market = binance.market(SYMBOL)
@@ -47,7 +47,6 @@ resp = binance.fapiPrivate_post_leverage({
     'symbol': market['id'],
     'leverage': LEVERAGE
 })
-
 
 def trendstate(df,SPAN):
     global last_signal
@@ -182,8 +181,7 @@ while(True):
                 )
                 # print(datetime.datetime.now() + " Short Position")
                 stoploss = df['high'][-2]            
-            else:
-                pass
+
 
         # Long Position
         elif(Currentposition > 0):
@@ -218,7 +216,7 @@ while(True):
                 )
                 stoploss = df['low'][-2] 
                 # print(datetime.datetime.now() + " Shrot ---> Long Switching")
-        time.sleep(0.5)
+        time.sleep(3)
     except Exception as e:    # 모든 예외의 에러 메시지를 출력할 때는 Exception을 사용
         print('ERROR NAME : ', e)
-        time.sleep(0.5)
+        time.sleep(3)
